@@ -1,4 +1,4 @@
-# cookmate
+# CookMate
 
 A new Flutter project.
 
