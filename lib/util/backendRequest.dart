@@ -12,6 +12,37 @@ class BackendRequest {
 
   static const String _FAIL_LOGIN = "Unable to log in with provided credentials.";
 
+ // static const String _RECIPE;
+  static const String _RECIPE_LIST_JSON = '''
+        {
+        "offset": 0,
+        "number": 2,
+        "results": [
+            {
+                "id": 633508,
+                "image": "Baked-Cheese-Manicotti-633508.jpg",
+                "imageUrls": [
+                    "Baked-Cheese-Manicotti-633508.jpg"
+                ],
+                "readyInMinutes": 45,
+                "servings": 6,
+                "title": "Baked Cheese Manicotti"
+            },
+            {
+                "id": 634873,
+                "image": "Best-Baked-Macaroni-and-Cheese-634873.jpg",
+                "imageUrls": [
+                    "Best-Baked-Macaroni-and-Cheese-634873.jpg"
+                ],
+                "readyInMinutes": 45,
+                "servings": 12,
+                "title": "Best Baked Macaroni and Cheese"
+            }
+        ],
+        "totalResults": 719
+    }
+  ''';
+
   /* Method: createUser
    * Arg(s):
    *    - email: the user's email
