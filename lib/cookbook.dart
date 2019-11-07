@@ -7,8 +7,9 @@ class Recipe {
   String imageURL;
   int servings;
   int cookTime;
+  Map<String, dynamic> json;
 
-  Recipe.fromJSON(Map<String, dynamic> json) {
+  Recipe.fromJSON(Map<String, dynamic> json) : this.json = json {
 
     id = json['id'];
     title = json['title'];
