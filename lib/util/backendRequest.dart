@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:cookmate/cookbook.dart';
 import 'package:http/http.dart' as http;
 
 class BackendRequest {
@@ -11,37 +11,6 @@ class BackendRequest {
   static const int _SERVER = 5;
 
   static const String _FAIL_LOGIN = "Unable to log in with provided credentials.";
-
- // static const String _RECIPE;
-  static const String _RECIPE_LIST_JSON = '''
-        {
-        "offset": 0,
-        "number": 2,
-        "results": [
-            {
-                "id": 633508,
-                "image": "Baked-Cheese-Manicotti-633508.jpg",
-                "imageUrls": [
-                    "Baked-Cheese-Manicotti-633508.jpg"
-                ],
-                "readyInMinutes": 45,
-                "servings": 6,
-                "title": "Baked Cheese Manicotti"
-            },
-            {
-                "id": 634873,
-                "image": "Best-Baked-Macaroni-and-Cheese-634873.jpg",
-                "imageUrls": [
-                    "Best-Baked-Macaroni-and-Cheese-634873.jpg"
-                ],
-                "readyInMinutes": 45,
-                "servings": 12,
-                "title": "Best Baked Macaroni and Cheese"
-            }
-        ],
-        "totalResults": 719
-    }
-  ''';
 
   /* Method: createUser
    * Arg(s):
@@ -286,6 +255,38 @@ class BackendRequest {
 
     print("Log out successful");
     return true;
+  }
+
+  static Future<List<Ingredient>> ingredientList (String authToken) async {
+
+    print("Getting ingredient list...");
+
+    // Make API call
+    final response = await http.get(
+      "https://thecookmate.com/api/recipe/ingredient", 
+      headers: { "Authorization":"Token $authToken" }
+    );
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS)
+    {
+      print("Request for ingredient list failed");
+      print(_interpretStatus(statusCode, response.statusCode));
+      return null;
+    }
+
+    // Parse JSON & build ingredient list
+    List<dynamic> data = jsonDecode(response.body);
+    List<Ingredient> ingredients = new List<Ingredient>();
+    Ingredient ingredient;
+    for(int i = 0; i < data.length; i++)
+    {
+      ingredient = Ingredient.fromJSON(data[i]);
+      ingredients.add(ingredient);
+    }
+
+    return ingredients;
   }
 
   /* Method: _interpretStatus
