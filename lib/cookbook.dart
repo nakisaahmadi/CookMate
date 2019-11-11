@@ -22,3 +22,15 @@ class Recipe {
 
   @override String toString() => "Recipe: $title \nServings: $servings \nCook Time: $cookTime minutes";
 }
+
+class Ingredient {
+
+  String name;
+  int id;
+
+  Ingredient.fromJSON(Map<String, dynamic> json) {
+
+    name = json['name'];
+    id = json['id'];
+  }
+}
