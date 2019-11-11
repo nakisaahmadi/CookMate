@@ -257,6 +257,14 @@ class BackendRequest {
     return true;
   }
 
+  /* Method: ingredientList
+   * Arg(s):
+   *    - authToken: The auth token associated with the user when they log in
+   * 
+   * Return:
+   *    - success: A list of ingredients
+   *    - failure: null
+   */
   static Future<List<Ingredient>> ingredientList (String authToken) async {
 
     print("Getting ingredient list...");
