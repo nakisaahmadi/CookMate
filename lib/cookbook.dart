@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+/* Class: Recipe
+ * Description: Recipe object with basic data about a recipe, including its title, image, servings, etc...
+ *              More data regarding the recipe can be retrieved from its embedded JSON.
+ */
 class Recipe {
 
   int id;
@@ -23,6 +27,9 @@ class Recipe {
   @override String toString() => "Recipe: $title \nServings: $servings \nCook Time: $cookTime minutes";
 }
 
+/* Class: Ingredient
+ * Description: Ingredient object containing its name, and id.
+ */
 class Ingredient {
   
   int id;
@@ -35,6 +42,9 @@ class Ingredient {
   }
 }
 
+/* Class: Diet
+ * Description: Diet object containing its name, summary, and id.
+ */
 class Diet {
 
   int id;
