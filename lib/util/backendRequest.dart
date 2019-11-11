@@ -297,6 +297,46 @@ class BackendRequest {
     return ingredients;
   }
 
+  /* Method: getDiets
+   * Arg(s):
+   *    - authToken: The auth token associated with the user when they log in
+   * 
+   * Return:
+   *    - success: A list of diets
+   *    - failure: null
+   */
+  static Future<List<Diet>> getDietList (String authToken) async {
+
+    print("Getting full list of diets...");
+
+    // Make API call
+    final response = await http.get(
+      "https://thecookmate.com/api/recipe/diets", 
+      headers: { "Authorization":"Token $authToken" }
+    );
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS)
+    {
+      print("Request for diet list failed");
+      print(_interpretStatus(statusCode, response.statusCode));
+      return null;
+    }
+
+    // Parse JSON & build ingredient list
+    List<dynamic> data = jsonDecode(response.body);
+    List<Diet> diets = new List<Diet>();
+    Diet diet;
+    for(int i = 0; i < data.length; i++)
+    {
+      diet = Diet.fromJSON(data[i]);
+      diets.add(diet);
+    }
+
+    return diets;
+  }
+
   /* Method: _interpretStatus
    * Arg(s):
    *    - statusSode: The reduced code to determine error type

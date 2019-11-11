@@ -24,13 +24,27 @@ class Recipe {
 }
 
 class Ingredient {
-
-  String name;
+  
   int id;
+  String name;
 
   Ingredient.fromJSON(Map<String, dynamic> json) {
 
-    name = json['name'];
     id = json['id'];
+    name = json['name'];
+  }
+}
+
+class Diet {
+
+  int id;
+  String name;
+  String summary;
+
+  Diet.fromJSON(Map<String, dynamic> json) {
+    
+    id = json['id'];
+    name = json['name'];
+    summary = json['summary'];
   }
 }
