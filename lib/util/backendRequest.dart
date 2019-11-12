@@ -101,9 +101,7 @@ class BackendRequest {
     var rq = http.Request("DELETE", Uri.parse("https://thecookmate.com/auth/users/me/"));
     rq.bodyFields = {"current_password":password};
     rq.headers.addAll({"Authorization":"Token $authToken"});
-
     var response = await client.send(rq);
-
     client.close();
 
     // Validate return
@@ -335,6 +333,46 @@ class BackendRequest {
     }
 
     return diets;
+  }
+
+  /* Method: barcode
+   * Arg(s):
+   *    - barcode: The UPC of the item scanned
+   *    - authToken: The auth token associated with the user when they log in
+   * 
+   * Return:
+   *    - success: A list of breadcrumbs
+   *    - failure: null
+   */
+  static Future<List<String>> barcode (String barcode, String authToken) async {
+
+    print("Getting ingredient breadcrumbs from barcode...");
+
+    // Make API call
+    var params = { "barcode":barcode };
+    final uri = Uri.https("thecookmate.com", "/api/barcode/", params);
+    final response = await http.get(uri, headers: { "Authorization":"Token $authToken" });
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS)
+    {
+      print("Request for ingredient failed");
+      print(_interpretStatus(statusCode, response.statusCode));
+      return null;
+    }
+
+    // Parse JSON & build ingredient list
+    var data = jsonDecode(response.body);
+    List<dynamic> dataValues = data['label'];
+    List<String> breadcrumbs = new List(dataValues.length);
+    for(int i = 0; i < dataValues.length; i++)
+    {
+      print("Breadcrumb ${i + 1}: ${dataValues[i].toString()}");
+      breadcrumbs[i] = dataValues[i].toString();
+    }
+
+    return breadcrumbs;
   }
 
   /* Method: _interpretStatus
