@@ -43,7 +43,7 @@ class BackendRequest {
     int statusCode = response.statusCode ~/ 100;
     if(statusCode != _SUCCESS)
     {
-      print(_interpretStatus(statusCode, response.statusCode));
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
       return null;
     }
 
@@ -74,7 +74,7 @@ class BackendRequest {
     int statusCode = response.statusCode ~/ 100;
     if(statusCode != _SUCCESS)
     {
-      print(_interpretStatus(statusCode, response.statusCode));
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
       return null;
     }
 
@@ -108,7 +108,7 @@ class BackendRequest {
     int statusCode = response.statusCode ~/ 100;
     if(statusCode != _SUCCESS)
     {
-      print(_interpretStatus(statusCode, response.statusCode));
+      print(_interpretStatus(statusCode, response.statusCode, await response.stream.bytesToString()));
       return false;
     }
 
@@ -151,7 +151,7 @@ class BackendRequest {
       int statusCode = response.statusCode ~/ 100;
       if(statusCode != _SUCCESS)
       {
-        print(_interpretStatus(statusCode, response.statusCode));
+        print(_interpretStatus(statusCode, response.statusCode, response.body));
         updateStatus = false;
       } else {
         print("Username successfully updated to $newUsername");
@@ -174,7 +174,7 @@ class BackendRequest {
       int statusCode = response.statusCode ~/ 100;
       if(statusCode != _SUCCESS)
       {
-        print(_interpretStatus(statusCode, response.statusCode));
+        print(_interpretStatus(statusCode, response.statusCode, response.body));
         updateStatus = false;
       } else {
         print("Password successfully updated to $newPassword");
@@ -217,7 +217,7 @@ class BackendRequest {
         return loginError[0];
       }
 
-      print(_interpretStatus(statusCode, response.statusCode));
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
       return null;
     }
 
@@ -247,7 +247,7 @@ class BackendRequest {
     int statusCode = response.statusCode ~/ 100;
     if(statusCode != _SUCCESS)
     {
-      print(_interpretStatus(statusCode, response.statusCode));
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
       return false;
     }
 
@@ -278,7 +278,7 @@ class BackendRequest {
     if(statusCode != _SUCCESS)
     {
       print("Request for ingredient list failed");
-      print(_interpretStatus(statusCode, response.statusCode));
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
       return null;
     }
 
@@ -318,7 +318,7 @@ class BackendRequest {
     if(statusCode != _SUCCESS)
     {
       print("Request for diet list failed");
-      print(_interpretStatus(statusCode, response.statusCode));
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
       return null;
     }
 
@@ -358,7 +358,7 @@ class BackendRequest {
     if(statusCode != _SUCCESS)
     {
       print("Request for ingredient failed");
-      print(_interpretStatus(statusCode, response.statusCode));
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
       return null;
     }
 
@@ -382,26 +382,28 @@ class BackendRequest {
    * 
    * Return: the appropriate status notification/error message
    */
-  static String _interpretStatus (int statusCode, int responseCode) {
+  static String _interpretStatus (int statusCode, int responseCode, String error) {
 
-    String statusReport = "\n--- Backend Request Failed ---\nStatus code $responseCode\n"; 
+    String statusReport = "\n\n\t--- Backend Request Failed ---\n\tStatus code $responseCode\n"; 
 
     switch(statusCode)
     {
       case _INFORMATIONAL:
-        statusReport = "\n--- Backend Request In Progress ---\nStatus code $statusCode, "; 
+        statusReport = "\n\n\t--- Backend Request In Progress ---\n\tStatus code $statusCode, "; 
         break;
       case _REDIRECT:
-        statusReport += "Redirect Error";
+        statusReport += "\tRedirect Error";
         break;
       case _CLIENT:
-        statusReport += "Client Error";
+        statusReport += "\tClient Error";
         break;
       case _SERVER:
-        statusReport += "Server Error";
+        statusReport += "\tServer Error";
         break;
     }
 
+    var message = jsonDecode(error);
+    statusReport += ": ${message['error']}";
     return statusReport;
   }
 }
