@@ -21,6 +21,7 @@ class ScanButtonState extends State<ScanButton> {
   String _scanBarcode = 'Unknown';
   String _itemName = 'Name';
   List<String> test;
+  BackendRequest be = new BackendRequest("42e96d88b6684215c9e260273b5e56b0522de18e", 4);
 
   Future<List<String>> scanBarcodeNormal(BuildContext context) async {
     String barcodeScanRes;
@@ -39,7 +40,7 @@ class ScanButtonState extends State<ScanButton> {
     if (!mounted) return null;
 
     //Call the backend with the barcode to return the Bread Crumb list
-    List<String> breadCrumbs = await BackendRequest.barcode("089836187635", "42e96d88b6684215c9e260273b5e56b0522de18e");
+    List<String> breadCrumbs = await be.getBreadcrumbs(barcodeScanRes);
 
     //If the backend does not return us anything this displays a popup
     if(breadCrumbs == null){
@@ -65,7 +66,7 @@ class ScanButtonState extends State<ScanButton> {
 
   Future<List<String>> getIngredients(List<String> breadCrumbs, String authToken) async {
       //get the indredient list
-      List<Ingredient> ingredients = await BackendRequest.ingredientList(authToken);
+      List<Ingredient> ingredients = await be.getIngredientList();
       List<String> matched = new List<String>();
       
       for(int i =0; i < breadCrumbs.length; i++){
