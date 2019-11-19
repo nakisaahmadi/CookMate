@@ -1,5 +1,5 @@
+import 'package:cookmate/util/backendRequest.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 
 /* Class: Recipe
  * Description: Recipe object with basic data about a recipe, including its title, image, servings, etc...
@@ -7,28 +7,43 @@ import 'package:http/http.dart';
  */
 class Recipe {
 
+  bool _complete;
+
   int id;
+  int apiID;
   String title;
   String imageURL;
   int servings;
   int cookTime;
   Map<String, dynamic> _json;
 
-  Recipe(int id) : this.id = id;
+  Recipe(int id) : this.id = id, _complete = false;
+  Recipe.forCalendar(Map<String, dynamic> json) {
+    
+    id = json['id'];
+    apiID = json['api_id'];
+    title = json['name'];
+    imageURL = json['url'];
+    _complete = false;
+  }
 
-  Recipe.fromJSON(Map<String, dynamic> json) : _json = json {
+  Recipe.complete(Map<String, dynamic> json) : _json = json {
 
     id = json['id'];
+    apiID = json['api_id'];
     title = json['title'];
-    imageURL = json['image'];
+    imageURL = json['url'];
     servings = json['servings'];
-    cookTime = json['readyInMinutes'];
+    cookTime = json['cookTime'];
+    _complete = true;
   }
 
   Image get image => Image.network(imageURL);
   Map<String, dynamic> get json => _json;
+  bool get isComplete => _complete;
 
-  @override String toString() => "Recipe: $title \nServings: $servings \nCook Time: $cookTime minutes";
+  // TODO: Implement toString()
+
 }
 
 /* Class: Ingredient
