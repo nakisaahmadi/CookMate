@@ -11,10 +11,6 @@ import 'dialog.dart';
 class ScanButton extends StatefulWidget {
   @override
   ScanButtonState createState() => ScanButtonState();
-
-  List<String> getIngredients(){
-    
-  }
 }
 
 class ScanButtonState extends State<ScanButton> {

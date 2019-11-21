@@ -30,12 +30,40 @@ class Recipe {
   Recipe.complete(Map<String, dynamic> json) : _json = json {
 
     id = json['id'];
-    apiID = json['api_id'];
+    //apiID = json['api_id'];
     title = json['title'];
-    imageURL = json['url'];
+    imageURL = json['image'];
     servings = json['servings'];
-    cookTime = json['cookTime'];
+    cookTime = json['readyInMinutes'];
     _complete = true;
+  }
+
+  //Returns all the ingredients for a given recipe
+  List<String> getIngredients(){
+    List<String> ingredients = new List<String>();
+
+    List<dynamic> ingredientList = json["extendedIngredients"];
+    
+    
+    for(int i =0; i < ingredientList.length; i++){
+      ingredients.add(ingredientList[i]["originalString"]);
+    }
+    print(ingredients.toString());
+    return ingredients;
+  }
+
+  //Returns the instructions in a list
+  List<String> getInstructions(){
+    List<String> instructions = new List<String>();
+
+    var instructionList = json["analyzedInstructions"][0][
+      "steps"];
+    
+    for(Map<String,dynamic> step in instructionList){
+      instructions.add(step["step"]);
+    }
+
+    print(instructions.toString());
   }
 
   Image get image => Image.network(imageURL);
