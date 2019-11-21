@@ -63,14 +63,14 @@ class BackendRequest {
    *    - success: ID of the new user
    *    - failure: null
    */
-  Future<int> getUser () async {
+  static Future<int> getUser (String authToken) async {
 
-    print("Getting user info ($_authToken)...");
+    print("Getting user info ($authToken)...");
       
     // Make API call
     final response = await http.get(
       "https://thecookmate.com/auth/users/me", 
-      headers: { "Authorization":"Token $_authToken" }
+      headers: { "Authorization":"Token $authToken" }
     );
 
     // Validate return
@@ -312,7 +312,7 @@ class BackendRequest {
    *    - success: ID of the new user
    *    - failure: null
    */
-  Future<bool> updateUserProfile (UserProfile userProfile) async {
+  /*Future<bool> updateUserProfile (UserProfile userProfile) async {
 
     print("Updating user profile (User ID: ${userProfile.id}, $_authToken)...");
 
@@ -340,7 +340,185 @@ class BackendRequest {
     }
 
     print("Update Successful! Request returned ${response.body}");
+    return true;
+  }*/
 
+  /* Method: addFavorite
+   * Arg(s):
+   *    - recipeID: The id of the recipe to add as favorite
+   * Return:
+   *    - success: true
+   *    - failure: false
+   */
+  Future<bool> addFavorite(int recipeID) async {
+
+    print("Adding recipe $recipeID to favorites...");
+
+    // Make API call
+    final response = await http.post(
+      "https://thecookmate.com/auth/user-profile/add-favorite/", 
+      headers: { "Authorization":"Token $_authToken" },
+      body: { "user":_userID, "recipe":"$recipeID" }
+    );
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS)
+    {
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
+      return false;
+    }
+
+    print("Added favorite successfully!");
+    return true;
+  }
+
+  /* Method: removeFavorite
+   * Arg(s):
+   *    - recipeID: The id of the recipe to remove from favorite
+   * Return:
+   *    - success: true
+   *    - failure: false
+   */
+  Future<bool> removeFavorite(int recipeID) async {
+
+    print("Adding recipe $recipeID to favorites...");
+
+    // Make API call
+    final response = await http.post(
+      "https://thecookmate.com/auth/user-profile/remove-favorite/", 
+      headers: { "Authorization":"Token $_authToken" },
+      body: { "user":_userID, "recipe":"$recipeID" }
+    );
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS)
+    {
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
+      return false;
+    }
+
+    print("Removed favorite successfully!");
+    return true;
+  }
+
+/* Method: addAllergen
+   * Arg(s):
+   *    - allergenID: The id of the allergen to add
+   * Return:
+   *    - success: true
+   *    - failure: false
+   */
+  Future<bool> addAllergen(int allergenID) async {
+
+    print("Adding allergen $allergenID to user...");
+
+    // Make API call
+    final response = await http.post(
+      "https://thecookmate.com/auth/user-profile/add-allergen/", 
+      headers: { "Authorization":"Token $_authToken" },
+      body: { "user":_userID, "allergen":"$allergenID" }
+    );
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS)
+    {
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
+      return false;
+    }
+
+    print("Added allergen successfully!");
+    return true;
+  }
+
+  /* Method: removeAllergen
+   * Arg(s):
+   *    - allergenID: The id of the allergen to add
+   * Return:
+   *    - success: true
+   *    - failure: false
+   */
+  Future<bool> removeAllergen(int allergenID) async {
+
+    print("Removing allergen $allergenID to user...");
+
+    // Make API call
+    final response = await http.post(
+      "https://thecookmate.com/auth/user-profile/remove-allergen/", 
+      headers: { "Authorization":"Token $_authToken" },
+      body: { "user":_userID, "allergen":"$allergenID" }
+    );
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS)
+    {
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
+      return false;
+    }
+
+    print("Remove allergen successfully!");
+    return true;
+  }
+
+  /* Method: setDiet
+   * Arg(s):
+   *    - dietID: The id of the diet to set
+   * Return:
+   *    - success: true
+   *    - failure: false
+   */
+  Future<bool> setDiet(int dietID) async {
+
+    print("Adding diet $dietID to user...");
+
+    // Make API call
+    final response = await http.post(
+      "https://thecookmate.com/auth/user-profile/set-diet/", 
+      headers: { "Authorization":"Token $_authToken" },
+      body: { "user":_userID, "diet":"$dietID" }
+    );
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS)
+    {
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
+      return false;
+    }
+
+    print("Set diet successfully!");
+    return true;
+  }
+
+  /* Method: clearDiet
+   * Arg(s): n/a
+   * Return:
+   *    - success: true
+   *    - failure: false
+   */
+  Future<bool> clearDiet() async {
+
+    print("Clearing diet from user...");
+
+    // Make API call
+    final response = await http.post(
+      "https://thecookmate.com/auth/user-profile/clear-diet/", 
+      headers: { "Authorization":"Token $_authToken" },
+      body: { "user":_userID }
+    );
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS)
+    {
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
+      return false;
+    }
+
+    print("Cleared diet successfully!");
     return true;
   }
 
@@ -357,7 +535,7 @@ class BackendRequest {
 
     // Make API call
     final response = await http.get(
-      "https://thecookmate.com/api/recipe/ingredient", 
+      "https://thecookmate.com/api/recipe/ingredient/", 
       headers: { "Authorization":"Token $_authToken" }
     );
 
@@ -371,7 +549,7 @@ class BackendRequest {
 
     // Parse JSON & build ingredient list
     List<dynamic> data = jsonDecode(response.body);
-    List<Ingredient> ingredients = new List<Ingredient>();
+    List<Ingredient> ingredients = List<Ingredient>();
     Ingredient ingredient;
     for(int i = 0; i < data.length; i++)
     {
@@ -380,6 +558,44 @@ class BackendRequest {
     }
 
     return ingredients;
+  }
+
+  /* Method: getCuisineList
+   * Arg(s):
+   * 
+   * Return:
+   *    - success: A list of cuisines
+   *    - failure: null
+   */
+  Future<List<Cuisine>> getCuisineList () async {
+
+    print("Getting cuisine list...");
+
+    // Make API call
+    final response = await http.get(
+      "https://thecookmate.com/api/recipe/cuisine/", 
+      headers: { "Authorization":"Token $_authToken" }
+    );
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS) {
+      print("Request for ingredient list failed");
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
+      return null;
+    }
+
+    // Parse JSON & build cuisine list
+    List<dynamic> data = jsonDecode(response.body);
+    List<Cuisine> cuisines = List<Cuisine>();
+    Cuisine cuisine;
+    for(int i = 0; i < data.length; i++)
+    {
+      cuisine = Cuisine.fromJSON(data[i]);
+      cuisines.add(cuisine);
+    }
+
+    return cuisines;
   }
 
   /* Method: getDietList
@@ -460,13 +676,13 @@ class BackendRequest {
     return breadcrumbs;
   }
 
-  /*Future<Recipe> getRecipe (String apiID) async {
+  Future<Recipe> getRecipe (String apiID) async {
 
     print("Getting recipe with api id $apiID...");
 
     // Make API call
     final response = await http.get(
-      "https://thecookmate.com/api/recipe/recipeInfo?recipe_id=$recipeID", 
+      "https://thecookmate.com/api/recipe/recipeInfo?recipe_id=$apiID", 
       headers: { "Authorization":"Token $_authToken" }
     );
 
@@ -480,7 +696,7 @@ class BackendRequest {
     }
 
     return Recipe.complete(jsonDecode(response.body));
-  }*/
+  }
 
   void getPopularRecipes () async {
 
@@ -618,10 +834,10 @@ class BackendRequest {
    * 
    * Note: Must pass in at least one of the optional arguments
    */
-  /*Future<bool> updateMealInCalendar (Meal meal, { Recipe newRecipe, Date newDate }) async {
+  Future<bool> updateMealInCalendar (Meal meal, { Recipe newRecipe, Date newDate }) async {
 
     if(newRecipe != null) {
-      print("Changing meal ${meal.id} from ${meal.recipe.title} to ${newRecipe.title}");
+      print("Changing meal ${meal.id} from ${meal.recipe.id} to ${newRecipe.id}");
     }
 
     if(newDate != null) {
@@ -660,7 +876,7 @@ class BackendRequest {
     }
 
     return true;
-  }*/
+  }
 
   /* Method: deleteMealFromCalendar
    * Arg(s):
