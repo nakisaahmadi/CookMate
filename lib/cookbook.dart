@@ -38,6 +38,7 @@ class Recipe {
     _complete = true;
   }
 
+
   Image get image => Image.network(imageURL);
   Map<String, dynamic> get json => _json;
   bool get isComplete => _complete;
@@ -51,14 +52,21 @@ class Recipe {
  */
 class Ingredient {
   
-  int id;
-  String name;
+  final int id;
+  final String name;
 
-  Ingredient.fromJSON(Map<String, dynamic> json) {
+  Ingredient.fromJSON(Map<String, dynamic> json) : id = json['id'], name = json['name'];
+}
 
-    id = json['id'];
-    name = json['name'];
-  }
+/* Class: Cuisine
+ * Description: Cuisine object containing its name, and id.
+ */
+class Cuisine {
+  
+  final int id;
+  final String name;
+
+  Cuisine.fromJSON(Map<String, dynamic> json) : id = json['id'], name = json['name'];
 }
 
 /* Class: Diet
@@ -86,6 +94,7 @@ class UserProfile {
   int id;
   Map<String, dynamic> diet;
   List<Map<String, dynamic>> allergens;
+  List<Map<String, dynamic>> favorites;
 
   UserProfile(int id, Map<String, dynamic> diet, List<Map<String, dynamic>> allergens) : this.allergens = allergens, this.diet = diet, this.id = id;
   UserProfile.fromJSON(Map<String, dynamic> json) {
@@ -105,6 +114,13 @@ class UserProfile {
     } else {
       this.allergens = List<Map<String, dynamic>>();
     }
+    var favorites = json['favorites'];
+    if(favorites != null)
+    {
+      this.favorites = List<Map<String, dynamic>>.from(favorites);
+    } else {
+      this.favorites = List<Map<String, dynamic>>();
+    }
   }
 
   @override String toString() {
@@ -115,6 +131,11 @@ class UserProfile {
     for(int i = 0; i < allergens.length; i++)
     {
       string += "(${allergens[i]["name"]}, ${allergens[i]["id"]}), ";
+    }
+    string += "\nFavorites: ";
+    for(int i = 0; i < favorites.length; i++)
+    {
+      string += "(${favorites[i]["name"]}, ${favorites[i]["api_id"]}), ";
     }
     return string;
   }
