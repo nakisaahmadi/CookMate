@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'Wave_clipper.dart';
+
+import 'Wave_Clipper.dart';
+
 
 void main() => runApp(MyApp());
 
@@ -96,9 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       icon: Icon(Icons.menu),
                       color: Colors.white,
                       iconSize: 50.0,
-                      onPressed: () {
-                        print('Pressed');
-                      },
+                      onPressed: () {},
                     ),
                   ],
                 ),
@@ -209,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       onPressed: () {},
                     ),
-                  ]
+                  ],
                 ),
               ),
             ],
@@ -225,9 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       icon: Icon(Icons.calendar_today),
                       color: Color(0xFFD50000),
                       iconSize: 50.0,
-                      onPressed: () {
-                        print('Pressed');
-                      },
+                      onPressed: () {},
                     ),
                   ],
                 ),
@@ -245,7 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0),
                   child: Text(
-                    'Today Meals'.toUpperCase(),
+                    'Favorite Recipes'.toUpperCase(),
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 22.0,
@@ -265,17 +263,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 SizedBox(
                   height: 7.0,
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Text(
-                    'Popular Today !'.toUpperCase(),
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 22.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+
                 SizedBox(height: 7.0),
                 Container(
                   height: 250.0,
@@ -293,38 +281,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-//  Widget _buildItem(BuildContext context, index) {
-//    //final List<String> images = ['images/image1.png'];
-//    return Container(
-//
-//      height: 150.0,
-//      width: 180.0,
-//      margin: EdgeInsets.only(right: 10.0),
-//      child: Column(
-//        children: <Widget>[
-//          Card(
-//            //margin: EdgeInsets.only(left: 20.0, right: 20.0, top: 8.0, bottom: 5.0),
-//            shape: RoundedRectangleBorder(
-//                borderRadius: BorderRadius.circular(20.0)),
-//            elevation: 10.0,
-//
-//            child: Wrap(
-//              children: <Widget>[
-//
-//
-//                Image.network('https://www.w3schools.com/w3css/img_lights.jpg'),
-//
-//                ListTile(
-//                  title: Text('heading1'),
-//                  subtitle: Text('subtitle1'),
-//                ),
-//              ],
-//            ),
-//          ),
-//        ],
-//      ),
-//    );
-//  }
   Widget _buildItem(BuildContext context, index) {
     String mealName;
     return Padding(
@@ -368,28 +324,26 @@ class _MyHomePageState extends State<MyHomePage> {
                     icon: Icon(Icons.stars),
                     color: Colors.white,
                     iconSize: 20.0,
-                    onPressed: () {
-                      print('Pressed');
-                    },
+                    onPressed: () {},
                   ),
                 ],
               ),
             ),
 
-//            Positioned(
-//              top: 210.0,
-//              left: 125.0,
-//              child: Row(
-//                children: <Widget>[
-//                  IconButton(
-//                    icon: Icon(Icons.share),
-//                    color: Colors.white,
-//                    iconSize: 20.0,
-//                    onPressed: () {},
-//                  ),
-//                ],
-//              ),
-//            ),
+            Positioned(
+              top: 210.0,
+              left: 125.0,
+              child: Row(
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.share),
+                    color: Colors.white,
+                    iconSize: 20.0,
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ),
             Positioned(
               left: 40.0,
               bottom: 10.0,
