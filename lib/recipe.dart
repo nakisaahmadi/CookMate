@@ -11,5 +11,4 @@ class recipeDisplay extends StatefulWidget{
     // TODO: implement createState
     return null;
   }
-  }
 }

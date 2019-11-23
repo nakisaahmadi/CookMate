@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 
-import 'Wave_Clipper.dart';
+import 'Wave_clipper.dart';
 
 
 void main() => runApp(MyApp());
