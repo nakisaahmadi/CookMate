@@ -1,31 +1,354 @@
-import 'dart:convert';
-
-import 'package:cookmate/cookbook.dart';
-import 'package:cookmate/homePage.dart';
-import 'package:cookmate/util/backendRequest.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+import './util/database_helpers.dart';
+import './util/localStorage.dart';
+import './util/backendRequest.dart';
 
-  BackendRequest request = BackendRequest("03740945581ed4d2c3b25a62e7b9064cd62971a4", 2);
-  BackendRequest.login("testuser", "testpassword");
-  String json = """
-  {\"vegetarian\":true,\"vegan\":false,\"glutenFree\":false,\"dairyFree\":false,\"veryHealthy\":false,\"cheap\":false,\"veryPopular\":false,\"sustainable\":false,\"weightWatcherSmartPoints\":23,\"gaps\":\"no\",\"lowFodmap\":false,\"ketogenic\":false,\"whole30\":false,\"sourceUrl\":\"https://www.foodista.com/recipe/JVKTLG23/apricot-glazed-apple-tart\",\"spoonacularSourceUrl\":\"https://spoonacular.com/apricot-glazed-apple-tart-632660\",\"aggregateLikes\":3,\"spoonacularScore\":30.0,\"healthScore\":4.0,\"creditsText\":\"Foodista.com – The Cooking Encyclopedia Everyone Can Edit\",\"license\":\"CC BY 3.0\",\"sourceName\":\"Foodista\",\"pricePerServing\":158.88,\"extendedIngredients\":[{\"id\":20081,\"aisle\":\"Baking\",\"image\":\"flour.png\",\"consitency\":\"solid\",\"name\":\"flour\",\"original\":\"1 1/2 cups all-purpose flour, plus 1 tablespoon\",\"originalString\":\"1 1/2 cups all-purpose flour, plus 1 tablespoon\",\"originalName\":\"all-purpose flour, plus 1 tablespoon\",\"amount\":1.5,\"unit\":\"cups\",\"meta\":[\"all-purpose\"],\"metaInformation\":[\"all-purpose\"],\"measures\":{\"us\":{\"amount\":1.5,\"unitShort\":\"cups\",\"unitLong\":\"cups\"},\"metric\":{\"amount\":354.882,\"unitShort\":\"ml\",\"unitLong\":\"milliliters\"}}},{\"id\":2047,\"aisle\":\"Spices and Seasonings\",\"image\":\"salt.jpg\",\"consitency\":\"solid\",\"name\":\"salt\",\"original\":\"Pinch of salt\",\"originalString\":\"Pinch of salt\",\"originalName\":\"P of salt\",\"amount\":1.0,\"unit\":\"inch\",\"meta\":[],\"metaInformation\":[],\"measures\":{\"us\":{\"amount\":1.0,\"unitShort\":\"inch\",\"unitLong\":\"inch\"},\"metric\":{\"amount\":1.0,\"unitShort\":\"inch\",\"unitLong\":\"inch\"}}},{\"id\":1001,\"aisle\":\"Milk, Eggs, Other Dairy\",\"image\":\"butter-sliced.jpg\",\"consitency\":\"solid\",\"name\":\"butter\",\"original\":\"1 1/2 sticks cold unsalted butter cold unsalted butter<\",\"originalString\":\"1 1/2 sticks cold unsalted butter cold unsalted butter<\",\"originalName\":\"cold unsalted butter cold unsalted butter<\",\"amount\":1.5,\"unit\":\"sticks\",\"meta\":[\"unsalted\",\"cold\"],\"metaInformation\":[\"unsalted\",\"cold\"],\"measures\":{\"us\":{\"amount\":1.5,\"unitShort\":\"sticks\",\"unitLong\":\"sticks\"},\"metric\":{\"amount\":1.5,\"unitShort\":\"sticks\",\"unitLong\":\"sticks\"}}},{\"id\":14412,\"aisle\":\"Beverages\",\"image\":\"water.png\",\"consitency\":\"liquid\",\"name\":\"ice water\",\"original\":\"cup ice water\",\"originalString\":\"cup ice water\",\"originalName\":\"ice water\",\"amount\":1.0,\"unit\":\"cup\",\"meta\":[],\"metaInformation\":[],\"measures\":{\"us\":{\"amount\":1.0,\"unitShort\":\"cup\",\"unitLong\":\"cup\"},\"metric\":{\"amount\":236.588,\"unitShort\":\"ml\",\"unitLong\":\"milliliters\"}}},{\"id\":19335,\"aisle\":\"Baking\",\"image\":\"sugar-in-bowl.png\",\"consitency\":\"solid\",\"name\":\"sugar\",\"original\":\"3 1/2 tablespoons sugar\",\"originalString\":\"3 1/2 tablespoons sugar\",\"originalName\":\"sugar\",\"amount\":3.5,\"unit\":\"tablespoons\",\"meta\":[],\"metaInformation\":[],\"measures\":{\"us\":{\"amount\":3.5,\"unitShort\":\"Tbsps\",\"unitLong\":\"Tbsps\"},\"metric\":{\"amount\":3.5,\"unitShort\":\"Tbsps\",\"unitLong\":\"Tbsps\"}}},{\"id\":1079003,\"aisle\":\"Produce\",\"image\":\"red-delicious-apples.png\",\"consitency\":\"solid\",\"name\":\"red apples\",\"original\":\"4 larges red apples, such as Golden Delicious, peeled, cored and cut into 1/4-inch-thick slices\",\"originalString\":\"4 larges red apples, such as Golden Delicious, peeled, cored and cut into 1/4-inch-thick slices\",\"originalName\":\"s red apples, such as Golden Delicious, peeled, cored and cut into 1/4-inch-thick slices\",\"amount\":4.0,\"unit\":\"large\",\"meta\":[\"red\",\" such as golden delicious, peeled, cored and cut into 1/4-inch-thick slices \"],\"metaInformation\":[\"red\",\" such as golden delicious, peeled, cored and cut into 1/4-inch-thick slices \"],\"measures\":{\"us\":{\"amount\":4.0,\"unitShort\":\"large\",\"unitLong\":\"larges\"},\"metric\":{\"amount\":4.0,\"unitShort\":\"large\",\"unitLong\":\"larges\"}}},{\"id\":2010,\"aisle\":\"Spices and Seasonings\",\"image\":\"cinnamon.jpg\",\"consitency\":\"solid\",\"name\":\"cinnamon\",\"original\":\"2 teaspoons cinnamon\",\"originalString\":\"2 teaspoons cinnamon\",\"originalName\":\"cinnamon\",\"amount\":2.0,\"unit\":\"teaspoons\",\"meta\":[],\"metaInformation\":[],\"measures\":{\"us\":{\"amount\":2.0,\"unitShort\":\"tsps\",\"unitLong\":\"teaspoons\"},\"metric\":{\"amount\":2.0,\"unitShort\":\"tsps\",\"unitLong\":\"teaspoons\"}}},{\"id\":19719,\"aisle\":\"Nut butters, Jams, and Honey\",\"image\":\"apricot-jam.jpg\",\"consitency\":\"solid\",\"name\":\"apricot preserves\",\"original\":\"2 tablespoons apricot preserves, melted and strained\",\"originalString\":\"2 tablespoons apricot preserves, melted and strained\",\"originalName\":\"apricot preserves, melted and strained\",\"amount\":2.0,\"unit\":\"tablespoons\",\"meta\":[\"melted\"],\"metaInformation\":[\"melted\"],\"measures\":{\"us\":{\"amount\":2.0,\"unitShort\":\"Tbsps\",\"unitLong\":\"Tbsps\"},\"metric\":{\"amount\":2.0,\"unitShort\":\"Tbsps\",\"unitLong\":\"Tbsps\"}}}],\"id\":632660,\"title\":\"Apricot Glazed Apple Tart\",\"readyInMinutes\":45,\"servings\":4,\"image\":\"https://spoonacular.com/recipeImages/632660-556x370.jpg\",\"imageType\":\"jpg\",\"cuisines\":[],\"dishTypes\":[\"dessert\"],\"diets\":[\"lacto ovo vegetarian\"],\"occasions\":[],\"winePairing\":{\"pairedWines\":[\"cream sherry\",\"moscato dasti\",\"port\"],\"pairingText\":\"Cream Sherry, Moscato d'Asti, and Port are my top picks for Tart. A common wine pairing rule is to make sure your wine is sweeter than your food. Delicate desserts go well with Moscato d'Asti, nutty desserts with cream sherry, and caramel or chocolate desserts pair well with port. The NV Solera Cream Sherry with a 4.5 out of 5 star rating seems like a good match. It costs about 17 dollars per bottle.\",\"productMatches\":[{\"id\":428475,\"title\":\"NV Solera Cream Sherry\",\"description\":\"The Solera Cream Sherry has a brilliant amber and deep copper hue. With butterscotch and pecan aromas, the sweet salted nut and brown spice aromas carry a complex caramel accent. A sweet entry leads to a rounded, lush, moderately full-bodied palate with a lengthy, flavorful finish.\",\"price\":\"16.99\",\"imageUrl\":\"https://spoonacular.com/productImages/428475-312x231.jpg\",\"averageRating\":0.9,\"ratingCount\":4.0,\"score\":0.823076923076923,\"link\":\"https://www.amazon.com/NV-Solera-Cream-Sherry-750/dp/B00HSME8OW?tag=spoonacular-20\"}]},\"instructions\":\"In a food processor, pulse 1 1/2 cups of the flour with the salt. Add the cold butter and process just until the butter is the size of peas, about 5 seconds. Sprinkle the ice water over the mixture and process just until moistened, about 5 seconds. Transfer the dough to a lightly floured work surface and knead 2 or 3 times, just until it comes together. Pat the dough into a disk. On a lightly floured work surface, roll out the dough into a 16- to 17-inch round about 1/4 inch thick. Line a large baking sheet with parchment paper. Roll the dough around the rolling pin and unroll it onto the prepared baking sheet.  In a small bowl, combine 2 tablespoons of the sugar with the remaining 1 tablespoon of flour and sprinkle over the dough. Arrange the apple slices on top in overlapping concentric circles to within 3 inches of the edge. Fold the dough over the apples in a free-form fashion. Brush the apples with the melted butter and sprinkle with the remaining 1 1/2 tablespoons of sugar and cinnamon. Refrigerate the unbaked tart until slightly chilled, about 10 minutes. Preheat the oven to 400. Bake the tart in the center of the oven for 1 hour, or until the apples are tender and golden and the crust is deep golden and cooked through. Brush the apples with the melted preserves. Slide the parchment onto a wire rack and let the tart cool slightly before serving.\",\"analyzedInstructions\":[{\"name\":\"\",\"steps\":[{\"number\":1,\"step\":\"In a food processor, pulse 1 1/2 cups of the flour with the salt.\",\"ingredients\":[{\"id\":20081,\"name\":\"all purpose flour\",\"image\":\"flour.png\"},{\"id\":2047,\"name\":\"salt\",\"image\":\"salt.jpg\"}],\"equipment\":[{\"id\":404771,\"name\":\"food processor\",\"image\":\"food-processor.png\"}]},{\"number\":2,\"step\":\"Add the cold butter and process just until the butter is the size of peas, about 5 seconds. Sprinkle the ice water over the mixture and process just until moistened, about 5 seconds.\",\"ingredients\":[{\"id\":14412,\"name\":\"water\",\"image\":\"water.png\"},{\"id\":1001,\"name\":\"butter\",\"image\":\"butter-sliced.jpg\"}],\"equipment\":[]},{\"number\":3,\"step\":\"Transfer the dough to a lightly floured work surface and knead 2 or 3 times, just until it comes together. Pat the dough into a disk. On a lightly floured work surface, roll out the dough into a 16- to 17-inch round about 1/4 inch thick.\",\"ingredients\":[],\"equipment\":[]},{\"number\":4,\"step\":\"Line a large baking sheet with parchment paper.\",\"ingredients\":[],\"equipment\":[{\"id\":404770,\"name\":\"baking paper\",\"image\":\"baking-paper.jpg\"},{\"id\":404727,\"name\":\"baking sheet\",\"image\":\"baking-sheet.jpg\"}]},{\"number\":5,\"step\":\"Roll the dough around the rolling pin and unroll it onto the prepared baking sheet.\",\"ingredients\":[],\"equipment\":[{\"id\":404727,\"name\":\"baking sheet\",\"image\":\"baking-sheet.jpg\"},{\"id\":404746,\"name\":\"rolling pin\",\"image\":\"rolling-pin.jpg\"}]},{\"number\":6,\"step\":\"In a small bowl, combine 2 tablespoons of the sugar with the remaining 1 tablespoon of flour and sprinkle over the dough. Arrange the apple slices on top in overlapping concentric circles to within 3 inches of the edge. Fold the dough over the apples in a free-form fashion.\",\"ingredients\":[{\"id\":9003,\"name\":\"apple\",\"image\":\"apple.jpg\"},{\"id\":20081,\"name\":\"all purpose flour\",\"image\":\"flour.png\"},{\"id\":19335,\"name\":\"sugar\",\"image\":\"sugar-in-bowl.png\"}],\"equipment\":[{\"id\":404783,\"name\":\"bowl\",\"image\":\"bowl.jpg\"}]},{\"number\":7,\"step\":\"Brush the apples with the melted butter and sprinkle with the remaining 1 1/2 tablespoons of sugar and cinnamon. Refrigerate the unbaked tart until slightly chilled, about 10 minutes.\",\"ingredients\":[{\"id\":2010,\"name\":\"cinnamon\",\"image\":\"cinnamon.jpg\"},{\"id\":9003,\"name\":\"apple\",\"image\":\"apple.jpg\"},{\"id\":1001,\"name\":\"butter\",\"image\":\"butter-sliced.jpg\"},{\"id\":19335,\"name\":\"sugar\",\"image\":\"sugar-in-bowl.png\"}],\"equipment\":[],\"length\":{\"number\":10,\"unit\":\"minutes\"}},{\"number\":8,\"step\":\"Preheat the oven to 40\",\"ingredients\":[],\"equipment\":[{\"id\":404784,\"name\":\"oven\",\"image\":\"oven.jpg\"}]},{\"number\":9,\"step\":\"Bake the tart in the center of the oven for 1 hour, or until the apples are tender and golden and the crust is deep golden and cooked through.\",\"ingredients\":[{\"id\":9003,\"name\":\"apple\",\"image\":\"apple.jpg\"}],\"equipment\":[{\"id\":404784,\"name\":\"oven\",\"image\":\"oven.jpg\"}]},{\"number\":10,\"step\":\"Brush the apples with the melted preserves. Slide the parchment onto a wire rack and let the tart cool slightly before serving.\",\"ingredients\":[{\"id\":9003,\"name\":\"apple\",\"image\":\"apple.jpg\"}],\"equipment\":[{\"id\":405900,\"name\":\"wire rack\",\"image\":\"wire-rack.jpg\"}]}]}]}""";
-  Recipe recipe = Recipe.complete(jsonDecode(json));
-  recipe.getIngredients();
-  recipe.getInstructions();
-}
+void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.red),
       home: MyHomePage(),
     );
   }
+}
+
+class MyHomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Local DB Example'),
+      ),
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Column(
+            //mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Login User'),
+                  onPressed: () {
+                    _loginUser();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Remove Token'),
+                  onPressed: () {
+                    _removeToken();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Add Allergen'),
+                  onPressed: () {
+                    _addAllergen();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Get Allergens'),
+                  onPressed: () {
+                    _getAllergens();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Remove Allergen'),
+                  onPressed: () {
+                    _removeAllergen();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Clear Allergens'),
+                  onPressed: () {
+                    _clearAllergens();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Add Recipe'),
+                  onPressed: () {
+                    _addRecipe();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Get Recipes'),
+                  onPressed: () {
+                    _getRecipes();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Remove Recipe'),
+                  onPressed: () {
+                    _removeRecipe();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Clear Recipes'),
+                  onPressed: () {
+                    _clearRecipes();
+                  },
+                ),
+              ),
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Add Shopping Item'),
+                  onPressed: () {
+                    _addShoppingListItem();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Get Shopping List'),
+                  onPressed: () {
+                    _getShoppingList();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Purchase Shopping Item'),
+                  onPressed: () {
+                    _purchaseShoppingListItem();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Remove shopping item'),
+                  onPressed: () {
+                    _removeShoppingListItem();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Clear Shopping List'),
+                  onPressed: () {
+                    _clearShoppingList();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Get Ingredients'),
+                  onPressed: () {
+                    _getIngredients();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Clear Ingredients'),
+                  onPressed: () {
+                    _clearIngredients();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Add Ingredient'),
+                  onPressed: () {
+                    _addIngredient();
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: RaisedButton(
+                  child: Text('Add Server Ingredients'),
+                  onPressed: () {
+                    _addAllIngredients();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Examples on how to use local db and local storage
+
+  _loginUser() async {
+    String token = await BackendRequest.login('dayyan', 'coolpassword123');// login user from db
+    LocalStorage.storeAuthToken(token);// stores token locally
+    print(await LocalStorage.getAuthToken());// grabs token locally
+  }
+
+  _removeToken() async {
+    LocalStorage.deleteAuthToken();// removes token locally
+    print(await LocalStorage.getAuthToken());// checks if its not there should be -1
+  }
+
+  _addAllergen() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    Allergen allergen = Allergen(id: 3, name: 'Nuts');//creates an allergen use actual id and name
+    await helper.insertAllergen(allergen);//adds an allergen locally
+    print(await helper.allergens());//returns a list of all allergens the user has
+  }
+
+  _getAllergens() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    print(await helper.allergens());//returns a list of all allergens the user has
+  }
+
+  _removeAllergen() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    await helper.deleteAllergen('Nuts');// removes allergen with name Nuts locally
+    print('removed allergen: Nuts');
+    print(await helper.allergens());//returns a list of all allergens the user has
+  }
+
+  _clearAllergens() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    await helper.clearAllergens();// removes all local allergens
+    print(await helper.allergens());//returns a list of all allergens the user has
+  }
+
+  _addRecipe() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    //creates a favorite recipe, use actual id, name, and url of recipe from db
+    Recipe rec = Recipe(id: 2, name: 'Noodles', img: 'https://noodles.jpg');
+    await helper.insertRecipe(rec);//adds a recipe locally
+    print(await helper.recipes());//returns a list of all recipes the user has
+  }
+
+  _getRecipes() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    print(await helper.recipes());//returns a list of all recipes the user has
+  }
+
+  _removeRecipe() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    await helper.deleteRecipe(2);// removes recipe with id 2 locally
+    print('removed recipe: 2');
+    print(await helper.recipes());//returns a list of all recipes the user has
+  }
+
+  _clearRecipes() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    await helper.clearRecipes();// removes all local recipes
+    print(await helper.recipes());//returns a list of all recipes the user has
+  }
+
+  _addShoppingListItem() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    //creates a shopping list item, use actual ingredient name and quantity
+    ShoppingList sl = ShoppingList(ingredient: 'Oranges', quantity: 3, purchased: false);
+    await helper.insertShoppingListItem(sl);//adds a shopping list item locally
+    print(await helper.shoppingListItems());//returns a list of all shopping list items
+  }
+
+  _getShoppingList() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    print(await helper.shoppingListItems());//returns a list of all shopping list items
+  }
+
+  _purchaseShoppingListItem() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    ShoppingList sl = ShoppingList(ingredient: 'Oranges', quantity: 3, purchased: true);
+    await helper.updateShoppingListItem(sl);
+    print(await helper.shoppingListItems());//returns a list of all shopping list items
+  }
+
+  _removeShoppingListItem() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    await helper.deleteShoppingListItem('Oranges');//removes shopping list with ingredient name
+    print('removed item: Oranges');
+    print(await helper.shoppingListItems());//returns a list of all shopping list items
+  }
+
+  _clearShoppingList() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    await helper.clearShoppingList();// removes all local shopping list items
+    print(await helper.shoppingListItems());// returns a list of all shopping list items
+  }
+
+  _getIngredients() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    print(await helper.ingredients());// returns a list of all ingredients
+  }
+
+  _clearIngredients() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    await helper.clearIngredients();// removes all local ingredients
+    print(await helper.ingredients());// returns a list of all ingredients
+  }
+
+  _addIngredient() async {
+    DatabaseHelper helper = DatabaseHelper.instance;
+    Ingredient ing = Ingredient(id: 1, name: 'Tomatoes'); //creates an ingredient
+    await helper.insertIngredient(ing); //adds an ingredient locally
+    print(await helper.ingredients());// returns a list of all ingredients
+  }
+
+  _addAllIngredients() async {
+    String token = await LocalStorage.getAuthToken();
+    if (token != '-1') {
+      int userID = 2; // should grab this from local storage too...
+      // or ideally change backendRequest to not need userID
+      BackendRequest br = new BackendRequest(token, userID);
+      DatabaseHelper helper = DatabaseHelper.instance;
+
+      // gets ingredient list from server
+      // adds them to locally if not exist
+      await br.getIngredientList().then((ingList) {
+        for (dynamic ing in ingList) {
+          Ingredient newIng = Ingredient(name: ing.name, id: ing.id);
+          helper.insertIngredient(newIng);
+        }
+      });
+
+      // display all ingredients...
+      print(await helper.ingredients());// returns a list of all ingredients
+
+    } else {
+      print("User is not logged in.");
+    }
+  }
+
 }

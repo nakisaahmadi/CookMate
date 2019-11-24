@@ -71,4 +71,36 @@ class LocalStorage {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("user_id");
   }
+
+  /* Method: storeDiet
+   * Arg(s):
+   *    - diet: The diet set by the user
+   * 
+   * Return: n/a
+   */
+  static void storeDiet (String diet) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString("diet", diet);
+  }
+
+  /* Method: getDiet
+   * Arg(s): n/a
+   * 
+   * Return:
+   *  - success: The locally stored diet
+   *  - failure: "-1"
+   */
+  static Future<String> getDiet () async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("diet") ?? "-1";
+  }
+
+  /* Method: deleteDiet
+   * Arg(s): n/a
+   * Return: n/a
+   */
+  static void deleteDiet () async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("diet");
+  }
 }
