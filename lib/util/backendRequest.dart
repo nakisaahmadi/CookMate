@@ -14,7 +14,8 @@ class BackendRequest {
 
   final String _authToken;
   final String _userID;
-  BackendRequest (String authToken, int userID) : _authToken = authToken, _userID = userID.toString();
+  UserProfile _userProfile;
+  BackendRequest (String authToken, int userID, { UserProfile userProfile }) : _authToken = authToken, _userID = userID.toString(), _userProfile = userProfile;
 
   /* Method: createUser
    * Arg(s):
@@ -118,26 +119,17 @@ class BackendRequest {
     return true;
   }
 
-  /* Method: updateUser
+  /* Method: updateUsername
    * Arg(s):
-   *    - currentUsername (optional): The user's current username
-   *    - currentPassword (optional): The user's current password
-   *    - newUsername (optional): The user's requested new username
-   *    - newPassword (optional): The user's requested new password
-   *    - newEmail (optional): The user's requested new email
+   *    - currentUsername: The user's current username
+   *    - newUsername: The user's requested new username
    * 
    * Return:
-   *    - success: true, if ALL requested updates are successful
-   *    - failure: false, if ANY of the requested updates fail
-   * 
-   * Notes: To update the username, both newUsername and currentUsername 
-   *        need to be supplied, and correct. Same for passwords. To 
-   *        update the email, you just need to supply the new email.
+   *    - success: true, if update is successfuls
+   *    - failure: false, if updates fails
    */
-  Future<bool> updateUser ({String currentUsername, String currentPassword, String newUsername, String newPassword, String newEmail}) async {
+  Future<bool> updateUsername (String currentUsername, String newUsername) async {
 
-    bool updateStatus = true;
-    
     // Update username
     if(currentUsername != null && newUsername != null) {
       print("Updating username from $currentUsername to $newUsername...");
@@ -153,11 +145,25 @@ class BackendRequest {
       int statusCode = response.statusCode ~/ 100;
       if(statusCode != _SUCCESS) {
         print(_interpretStatus(statusCode, response.statusCode, response.body));
-        updateStatus = false;
+        return false;
       } else {
         print("Username successfully updated to $newUsername");
       }
     }
+
+    return true;
+  }
+
+  /* Method: updatePassword
+   * Arg(s):
+   *    - currentPassword: The user's current password
+   *    - newPassword: The user's requested new password
+   * 
+   * Return:
+   *    - success: true, if update is successfuls
+   *    - failure: false, if updates fails
+   */
+  Future<bool> updatePassword (String currentPassword, String newPassword) async {
 
     // Update password
     if(currentPassword != null && newPassword != null) {
@@ -174,11 +180,24 @@ class BackendRequest {
       int statusCode = response.statusCode ~/ 100;
       if(statusCode != _SUCCESS) {
         print(_interpretStatus(statusCode, response.statusCode, response.body));
-        updateStatus = false;
+        return false;
       } else {
         print("Password successfully updated to $newPassword");
       }
     }
+
+    return true;
+  }
+
+  /* Method: updateEmail
+   * Arg(s):
+   *    - newEmail: The user's requested new email
+   * 
+   * Return:
+   *    - success: true, if update is successfuls
+   *    - failure: false, if updates fails
+   */
+  Future<bool> updateUser (String newEmail) async {
 
     // Update email
     if(newEmail != null) {
@@ -195,13 +214,13 @@ class BackendRequest {
       int statusCode = response.statusCode ~/ 100;
       if(statusCode != _SUCCESS) {
         print(_interpretStatus(statusCode, response.statusCode, response.body));
-        updateStatus = false;
+        return false;
       } else {
         print("Email successfully updated to $newEmail");
       }
     }
 
-    return updateStatus;
+    return true;
   }
 
   /* Method: login
@@ -229,8 +248,7 @@ class BackendRequest {
     // Validate return
     var data = jsonDecode(response.body);
     int statusCode = response.statusCode ~/ 100;
-    if(statusCode != _SUCCESS)
-    {
+    if(statusCode != _SUCCESS) {
       List<dynamic> loginError = data["non_field_errors"];
       if(loginError != null && loginError[0] == _FAIL_LOGIN) {
         print("Log in failed, invalid credentials");
@@ -302,63 +320,27 @@ class BackendRequest {
     print("User profile found, returning profile for $_userID");
     UserProfile profile = UserProfile.fromJSON(jsonDecode(response.body));
     print(profile.toString());
+
+    _userProfile = profile;
     return profile;
   }
 
-  /* Method: updateUserProfile
-   * Arg(s):
-   * 
-   * Return:
-   *    - success: ID of the new user
-   *    - failure: null
-   */
-  /*Future<bool> updateUserProfile (UserProfile userProfile) async {
-
-    print("Updating user profile (User ID: ${userProfile.id}, $_authToken)...");
-
-    String allergens = "[ ";
-    for(Map<String, dynamic> allergen in userProfile.allergens)
-    {
-      allergens += "${jsonEncode(allergen["id"])}, ";
-    }
-    allergens = allergens.substring(0, allergens.length - 2);
-    allergens += " ]";
-      
-    // Make API call
-    final response = await http.put(
-      "https://thecookmate.com/auth/user-profile/${userProfile.id}/update/", 
-      headers: { "Authorization":"Token $_authToken", "Content-Type":"application/json" },
-      body: "{\"diet\":${userProfile.diet["id"]},\"allergens\":$allergens }"
-    );
-
-    // Validate return
-    int statusCode = response.statusCode ~/ 100;
-    if(statusCode != _SUCCESS)
-    {
-      print(_interpretStatus(statusCode, response.statusCode, response.body));
-      return false;
-    }
-
-    print("Update Successful! Request returned ${response.body}");
-    return true;
-  }*/
-
   /* Method: addFavorite
    * Arg(s):
-   *    - recipeID: The id of the recipe to add as favorite
+   *    - recipe: The recipe to add as favorite
    * Return:
    *    - success: true
    *    - failure: false
    */
-  Future<bool> addFavorite(int recipeID) async {
+  Future<bool> addFavorite(Recipe recipe) async {
 
-    print("Adding recipe $recipeID to favorites...");
+    print("Adding recipe ${recipe.id} to favorites...");
 
     // Make API call
     final response = await http.post(
       "https://thecookmate.com/auth/user-profile/add-favorite/", 
       headers: { "Authorization":"Token $_authToken" },
-      body: { "user":_userID, "recipe":"$recipeID" }
+      body: { "user":_userID, "recipe":"${recipe.apiID}" }
     );
 
     // Validate return
@@ -676,6 +658,14 @@ class BackendRequest {
     return breadcrumbs;
   }
 
+  /* Method: getRecipe
+   * Arg(s):
+   *    - apiID: The api ID of the recipe
+   * 
+   * Return:
+   *    - success: The complete recipe
+   *    - failure: null
+   */
   Future<Recipe> getRecipe (String apiID) async {
 
     print("Getting recipe with api id $apiID...");
@@ -698,7 +688,85 @@ class BackendRequest {
     return Recipe.complete(jsonDecode(response.body));
   }
 
-  void getPopularRecipes () async {
+  /* Method: recipeSearch
+   * Arg(s):
+   *    - cuisine (optional): The cuisine to search for
+   *    - maxCalories (optional): The max calorie limit for the recipes searched
+   *    - ingredients (optional): The ingredients to include in search
+   * 
+   * Return:
+   *    - success: The list of recipes returned from the search. If there are no
+   *               recipes returned, the list will be empty.
+   *    - failure: null
+   */
+  Future<List<Recipe>> recipeSearch ({String cuisine, int maxCalories, List<String> ingredients}) async {
+
+    print("Making recipe search...");
+
+    String ingredientList = "";
+    if(ingredients != null) {
+      for(String ingredient in ingredients) {
+        ingredientList += "$ingredient, ";
+      }
+
+      ingredientList = ingredientList.substring(0, ingredientList.length - 2);
+    }
+
+    final body = {
+      "cuisine":cuisine,
+      "diet":_userProfile.diet.name,
+      "maxCalories":maxCalories.toString(),
+      "intolerances":_userProfile.allergenList(),
+      "number":"10",
+      "includeIngredients":ingredientList
+    };
+
+    if(cuisine == null) {
+      body.remove("cuisine");
+    }
+
+    if(maxCalories == null) {
+      body.remove("maxCalories");
+    }
+
+    if(ingredients == null) {
+      body.remove("includeIngredients");
+    }
+
+    // Make API call
+    final response = await http.post(
+      "https://thecookmate.com/api/recipe/recipeSearch/", 
+      headers: { "Authorization":"Token $_authToken" },
+      body: body
+    );
+
+    // Validate return
+    int statusCode = response.statusCode ~/ 100;
+    if(statusCode != _SUCCESS) {
+      print("Recipe search failed");
+      print(_interpretStatus(statusCode, response.statusCode, response.body));
+      return null;
+    }
+
+    List<Recipe> recipes = List<Recipe>();
+    var data = jsonDecode(response.body);
+    for(Map<String, dynamic> recipeData in data) {
+      recipes.add(Recipe.complete(recipeData));
+    }
+
+    print("Recipe search returned ${recipes.length} recipes");
+
+    return recipes;
+  }
+
+  /* Method: getPopularRecipes
+   * Arg(s): n/a
+   * 
+   * Return:
+   *    - success: List of recipes with data for popular recipes
+   *    - failure: null
+   */
+  Future<List<Recipe>> getPopularRecipes () async {
 
     print("Getting full list of popular recipes...");
 
@@ -717,7 +785,13 @@ class BackendRequest {
       return null;
     }
 
-    print(response.body);
+    var data = jsonDecode(response.body);
+    List<Recipe> recipes = List<Recipe>();
+    for(Map<String, dynamic> recipe in data) {
+      recipes.add(Recipe.forPopularList(recipe));
+    }
+
+    return recipes;
   }
 
   /* Method: addMealToCalendar
@@ -769,7 +843,7 @@ class BackendRequest {
    *    - success: ID of the calendar meal
    *    - failure: null
    */
-  Future<List<Meal>> getMeals ({Date startDate, Date endDate}) async {
+  Future<List<Meal>> getMeals ({ Date startDate, Date endDate }) async {
 
     int _paramCount = 0;
     if(startDate != null) {

@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cookmate/cookbook.dart';
 
-class LocalStorage {
+class LocStorage {
 
   /* Method: storeAuthToken
    * Arg(s):
@@ -70,5 +71,28 @@ class LocalStorage {
 
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("user_id");
+  }
+
+  /* Method: storeUserProfile
+   * Arg(s):
+   *    - userID: The ID of the user
+   * 
+   * Return: n/a
+   */
+  static void storeUserProfile (UserProfile userProfile) async {
+
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt("up_id", userProfile.id);
+    prefs.setInt("ud_id", userProfile.diet.id);
+
+    prefs.setInt("all_count", userProfile.allergens.length);
+    for(int i = 0; i < userProfile.allergens.length; i++) {
+      prefs.setString("all_$i", userProfile.allergens[i]['name']);
+    }
+
+    prefs.setInt("fav_count", userProfile.favorites.length);
+    for(int i = 0; i < userProfile.favorites.length; i++) {
+      prefs.setString("fav_$i", userProfile.favorites[i]['name']);
+    }
   }
 }
