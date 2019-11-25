@@ -1,4 +1,3 @@
-import 'package:cookmate/util/backendRequest.dart';
 import 'package:flutter/material.dart';
 
 /* Class: Recipe
@@ -28,8 +27,6 @@ class Recipe {
     title = json['name'];
     imageURL = json['url'];
     _complete = false;
-
-    Future<Ingredient> ingredients;
   }
 
   Recipe.complete(Map<String, dynamic> json) : _json = json {
@@ -39,8 +36,8 @@ class Recipe {
     imageURL = json['image'];
     servings = json['servings'];
     cookTime = json['readyInMinutes'];
-    price = servings * json['pricePerServings'] / 100;
-    calories = json['calories'];
+    price = (servings * json['pricePerServings']).roundToDouble() / 100;
+    calories = json['calories'].toDouble();
     _complete = true;
   }
 
@@ -194,18 +191,6 @@ class UserProfile {
     }
 
     return list.substring(0, list.length - 2);
-  }
-
-  String toJSON () {
-
-    String allergenList = "[";
-    for(Map<String, dynamic> allergen in allergens) {
-      allergenList += "{\"id\":\"${allergen['id']}\",\"name\":\"${allergen['name']}\"}, ";
-    }
-
-    String json = " { ";
-
-    return json;
   }
 
   @override String toString() {
