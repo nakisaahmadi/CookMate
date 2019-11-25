@@ -1,5 +1,4 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:cookmate/cookbook.dart';
 
 class LocStorage {
 
@@ -73,26 +72,35 @@ class LocStorage {
     prefs.remove("user_id");
   }
 
-  /* Method: storeUserProfile
+  /* Method: storeDiet
    * Arg(s):
-   *    - userID: The ID of the user
+   *    - diet: The diet set by the user
    * 
    * Return: n/a
    */
-  static void storeUserProfile (UserProfile userProfile) async {
-
+  static void storeDiet (String diet) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setInt("up_id", userProfile.id);
-    prefs.setInt("ud_id", userProfile.diet.id);
+    prefs.setString("diet", diet);
+  }
 
-    prefs.setInt("all_count", userProfile.allergens.length);
-    for(int i = 0; i < userProfile.allergens.length; i++) {
-      prefs.setString("all_$i", userProfile.allergens[i]['name']);
-    }
+  /* Method: getDiet
+   * Arg(s): n/a
+   * 
+   * Return:
+   *  - success: The locally stored diet
+   *  - failure: "-1"
+   */
+  static Future<String> getDiet () async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("diet") ?? "-1";
+  }
 
-    prefs.setInt("fav_count", userProfile.favorites.length);
-    for(int i = 0; i < userProfile.favorites.length; i++) {
-      prefs.setString("fav_$i", userProfile.favorites[i]['name']);
-    }
+  /* Method: deleteDiet
+   * Arg(s): n/a
+   * Return: n/a
+   */
+  static void deleteDiet () async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("diet");
   }
 }
