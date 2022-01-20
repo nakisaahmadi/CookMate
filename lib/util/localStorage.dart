@@ -1,6 +1,12 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
-class LocStorage {
+/*
+  File: localStorage.dart
+  Functionality: 
+*/
+
+class LocalStorage {
 
   /* Method: storeAuthToken
    * Arg(s):
@@ -78,9 +84,9 @@ class LocStorage {
    * 
    * Return: n/a
    */
-  static void storeDiet (String diet) async {
+  static void storeDiet (int diet) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString("diet", diet);
+    prefs.setInt("diet", diet);
   }
 
   /* Method: getDiet
@@ -90,9 +96,9 @@ class LocStorage {
    *  - success: The locally stored diet
    *  - failure: "-1"
    */
-  static Future<String> getDiet () async {
+  static Future<int> getDiet () async {
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getString("diet") ?? "-1";
+    return prefs.getInt("diet") ?? -1;
   }
 
   /* Method: deleteDiet

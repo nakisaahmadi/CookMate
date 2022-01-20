@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+/*
+  File: dialog.dart
+  Functionality: This class defines the popup that is displayed when an item 
+  is not found in our UPC. It displays a popup that informs the user that the 
+  item could not be found and to try entering the item manually
+*/
+
 class CustomDialog extends StatelessWidget {
   final String title, description, buttonText;
   final Image image;

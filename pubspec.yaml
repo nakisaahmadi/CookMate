@@ -14,24 +14,36 @@ description: A new Flutter project.
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
+  flutter_speed_dial: ^1.2.4
   flutter_barcode_scanner: ^0.1.7
+  flutter_multiselect: 0.0.1
   http: ^0.12.0+2
   shared_preferences: 0.5.4+5
   sqflite: ^1.0.0
   path_provider: ^0.4.1
+  flutter_screenutil: ^0.6.1
   flutter:
     sdk: flutter
+  flushbar: ^1.9.1
 
+
+
+  # add flutter_ScreenUtil
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  table_calendar: ^2.1.0
+  email_validator: "0.1.4"
+
+  provider:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.7.4
 
 
 # For information on the generic Dart part of this file, see the
@@ -39,11 +51,36 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  fonts:
+    - family: Lato
+      fonts:
+        - asset: fonts/Lato-Light.ttf
+          weight: 100
+        - asset: fonts/Lato-Thin.ttf
+          weight: 200
+        - asset: fonts/Lato-Regular.ttf
+          weight: 300
+        - asset: fonts/Lato-Medium.ttf
+          weight: 400
+        - asset: fonts/Lato-Semibold.ttf
+          weight: 500
+        - asset: fonts/Lato-Heavy.ttf
+          weight: 600
+        - asset: fonts/Lato-Black.ttf
+          weight: 700
+  assets:
+    - assets/logo/chef.png
+  uses-material-design: true
+
+flutter_icons:
+  ios: true
+  android: true
+  image_path_ios: "assets/launcher/icon.png"
+  image_path_android: "assets/launcher/icon.png"
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
-  uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
   # assets:

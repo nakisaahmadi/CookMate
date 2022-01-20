@@ -3,6 +3,14 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
+/*
+  File: database_helpers.dart
+  Functionality: This file sets up our local database. It stores shopping list 
+  items, calendar items, favorites, user ID and auth token. It has methods that
+  allow the frontend to communicate and retreive/modidy/store data within the
+  database.
+*/
+
 // Store favorite recipe locally
 class Recipe {
   int id;
@@ -24,31 +32,33 @@ class Recipe {
 // Store shopping list items locally
 class ShoppingList {
   String ingredient;
-  int quantity;
+  double quantity;
   bool purchased = false;
+  String measurement;
 
-  ShoppingList({this.ingredient, this.quantity, this.purchased});
+  ShoppingList({this.ingredient, this.quantity, this.purchased, this.measurement});
 
   Map<String, dynamic> toMap() {
     return {
       'ingredient': ingredient,
       'quantity': quantity,
-      'purchased': purchased == false ? 0 : 1
+      'purchased': purchased == false ? 0 : 1,
+      'measurement': measurement
     };
   }
 
   @override
   String toString() {
-    return 'ShoppingList{ingredient: $ingredient, quantity: $quantity, purchased: $purchased}';
+    return 'ShoppingList{ingredient: $ingredient, quantity: $quantity, purchased: $purchased}, measurement: $measurement';
   }
 }
 
 // Store users allergens locally
-class Allergen {
+class LocalAllergen {
   int id;
   String name;
 
-  Allergen({this.id, this.name});
+  LocalAllergen({this.id, this.name});
 
   Map<String, dynamic> toMap() {
     return {'id': id, 'name': name};
@@ -59,6 +69,7 @@ class Allergen {
     return 'Allergen{id: $id, name: $name}';
   }
 }
+
 
 // Store a list of all ingredients locally
 class Ingredient {
@@ -74,6 +85,23 @@ class Ingredient {
   @override
   String toString() {
     return 'Ingredient{id: $id, name: $name}';
+  }
+}
+
+class Calendar {
+  int id;
+  String date;
+  int recipe_id;
+
+  Calendar({this.id, this.date, this.recipe_id});
+
+  Map<String, dynamic> toMap() {
+    return {'id': id, 'date': date, 'recipe_id': recipe_id};
+  }
+
+  @override
+  String toString() {
+    return 'Calendar{id: $id, date: $date, recipe_id: $recipe_id}';
   }
 }
 
@@ -127,8 +155,15 @@ class DatabaseHelper {
     await db.execute('''
       create table shopping_list (
         ingredient text primary key not null UNIQUE,
-        quantity integer not null,
-        purchased integer default 0
+        quantity real not null,
+        purchased integer default 0,
+        measurement text
+      )''');
+    await db.execute('''
+      create table calendar (
+        id integer primary key autoincrement,
+        date text not null,
+        recipe_id integer not null UNIQUE
       )''');
   }
 
@@ -271,12 +306,13 @@ class DatabaseHelper {
         ingredient: maps[i]['ingredient'],
         quantity: maps[i]['quantity'],
         purchased: maps[i]['purchased'] == 0 ? false : true,
+        measurement: maps[i]['measurement']
       );
     });
   }
 
   // User's Allergens
-  Future<int> insertAllergen(Allergen allergen) async {
+  Future<int> insertAllergen(LocalAllergen allergen) async {
     Database db = await database;
     int id = await db.insert(
       'allergen',
@@ -301,15 +337,55 @@ class DatabaseHelper {
     await db.delete('allergen');
   }
 
-  Future<List<Allergen>> allergens() async {
+  Future<List<LocalAllergen>> allergens() async {
     final Database db = await database;
     // Query the table for all The Allergens.
     final List<Map<String, dynamic>> maps = await db.query('allergen');
     // Convert the List<Map<String, dynamic> into a List<Allergen>.
     return List.generate(maps.length, (i) {
-      return Allergen(
+      return LocalAllergen(
         id: maps[i]['id'],
         name: maps[i]['name'],
+      );
+    });
+  }
+
+  // User's Calendar
+  Future<int> insertCalendar(Calendar cal) async {
+    Database db = await database;
+    int id = await db.insert(
+      'calendar',
+      cal.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.ignore,
+    );
+    return id;
+  }
+
+  Future<void> deleteCalendar(int id) async {
+    final db = await database;
+    // Remove the Calendar from the Database.
+    await db.delete(
+      'calendar',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> clearCalendars() async {
+    Database db = await database;
+    await db.delete('calendar');
+  }
+
+  Future<List<Calendar>> calendars() async {
+    final Database db = await database;
+    // Query the table for all The Calendars.
+    final List<Map<String, dynamic>> maps = await db.query('calendar');
+    // Convert the List<Map<String, dynamic> into a List<Calendar>.
+    return List.generate(maps.length, (i) {
+      return Calendar(
+        id: maps[i]['id'],
+        date: maps[i]['date'],
+        recipe_id: maps[i]['recipe_id']
       );
     });
   }

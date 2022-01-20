@@ -4,9 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
+import 'package:cookmate/util/localStorage.dart' as LS;
 
-import 'dialog.dart';
-
+/*
+  File: scanner.dart
+  Functionality: This file allows the user to open their camera and use it to
+  scan an items barcode and recieve recipes for it. It searches our database for
+  the UPC and if it is found it adds the ingredient to the ongoing search.
+*/
 
 class ScanButton extends StatefulWidget {
   @override
@@ -14,14 +19,19 @@ class ScanButton extends StatefulWidget {
 }
 
 class ScanButtonState extends State<ScanButton> {
-  String _scanBarcode = 'Unknown';
-  String _itemName = 'Name';
-  List<String> test;
-  BackendRequest be = new BackendRequest("42e96d88b6684215c9e260273b5e56b0522de18e", 4);
+  List<String> ingredientsForSearch;
+  int userID;
+  String token;
+  BackendRequest be;
 
-  Future<List<String>> scanBarcodeNormal(BuildContext context) async {
+  Future<List<String>> scanBarcodeNormal() async {
+    userID = await LS.LocalStorage.getUserID();
+    token = await LS.LocalStorage.getAuthToken();
+    be = new BackendRequest(token, userID);
+
     String barcodeScanRes;
     List<String> ingredients;
+
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
       barcodeScanRes = await FlutterBarcodeScanner.scanBarcode(
@@ -29,89 +39,61 @@ class ScanButtonState extends State<ScanButton> {
     } on PlatformException {
       barcodeScanRes = 'Failed to get platform version.';
     }
-
+    if(barcodeScanRes == null){
+      return new List<String>(100);
+    }
+    //print("after opening barcode");
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
     // setState to update our non-existent appearance.
-    if (!mounted) return null;
+    //if (!mounted) return null;
 
     //Call the backend with the barcode to return the Bread Crumb list
+    barcodeScanRes = barcodeScanRes.substring(1);
+
     List<String> breadCrumbs = await be.getBreadcrumbs(barcodeScanRes);
 
-    //If the backend does not return us anything this displays a popup
-    if(breadCrumbs == null){
-        showDialog(
-          context: context,
-          builder: (BuildContext context) => CustomDialog(
-           title: "Uh Oh",
-           description:
-            "Barcode not found in our database, please try entering the item manually",
-           buttonText: "Okay",
-          ),
-        );
-    }
-    else{
-     //Check the breadcrumbs for usable ingredients
-     test = await getIngredients(breadCrumbs, "42e96d88b6684215c9e260273b5e56b0522de18e");
-
-     setState(() {
-       test = ingredients;
-     });
-    }
+    //Check the breadcrumbs for usable ingredients
+    ingredients = await getIngredients(breadCrumbs);
+    return ingredients;
   }
 
-  Future<List<String>> getIngredients(List<String> breadCrumbs, String authToken) async {
-      //get the indredient list
-      List<Ingredient> ingredients = await be.getIngredientList();
-      List<String> matched = new List<String>();
-      
-      for(int i =0; i < breadCrumbs.length; i++){
-        var curr = breadCrumbs[i];
-        for(int j = 0; j < ingredients.length; j++){
-          if(ingredients[j].name.contains(curr)){
+  Future<List<String>> getIngredients(List<String> breadCrumbs) async {
+    if(breadCrumbs == null || breadCrumbs.length == 0){
+      return null;
+    }
+    int userID = await LS.LocalStorage.getUserID();
+    String token = await LS.LocalStorage.getAuthToken();
+    BackendRequest request = new BackendRequest(token, userID);
+    
+    //get the indredient list
+    List<Ingredient> ingredients = await request.getIngredientList();
+    List<String> matched = new List<String>();
+
+    for (int i = 0; i < breadCrumbs.length; i++) {
+      var curr = breadCrumbs[i];
+      for (int j = 0; j < ingredients.length; j++) {
+        if (ingredients[j].name == curr) {
+          matched.add(ingredients[j].name);
+        }
+      }
+      if (matched.length == 0) {
+        for (int j = 0; j < ingredients.length; j++) {
+          if (ingredients[j].name.contains(curr)) {
             matched.add(ingredients[j].name);
           }
         }
       }
-      return matched;
+    }
+    return matched;
   }
 
-  // @override
-  // Widget build(BuildContext context)  {
-  //  return Scaffold(
-  //    appBar: AppBar(
-  //       title: Text('Scanner'),
-  //     ),
-  //    body: Center(
-  //      child: Column (children: <Widget>[
-  //         FlatButton.icon(
-  //           color: Colors.red,
-  //           icon: Icon(Icons.add_a_photo),
-  //           label: Text('Scanner'),
-  //           onPressed: () {
-  //             scanBarcodeNormal(context);
-  //           },
-  //         ),
-
-  //         Text('Scan result : $_scanBarcode\n', style: TextStyle(fontSize: 20)),
-  //         Text('API result : $_itemName\n', style: TextStyle(fontSize: 20))
-  //      ]
-  //      ),
-  //     ) 
-  //   );
-  // }
-
-  List<String> getList(){
-    return this.test;
+  List<String> getList() {
+    return this.ingredientsForSearch;
   }
 
   @override
-  Widget build(BuildContext context)  {
-    return IconButton(
-      icon: Icon(Icons.camera),
-      onPressed: (){
-        scanBarcodeNormal(context);
-      }
-    );
+  Widget build(BuildContext context) {
+  
   }
 }
